@@ -20,6 +20,7 @@ function print_interactive {
 
 PKG_NAME=wine-nspa
 PKG_VER=5.9
+PKG_REL=12
 
 WINE_SOURCE="https://dl.winehq.org/wine/source/5.x/wine-${PKG_VER}.tar.xz"
 WINE_STAGING_SOURCE="https://github.com/wine-staging/wine-staging/archive/v${PKG_VER}.tar.gz"
@@ -88,8 +89,20 @@ cd "${WINE_DIR}/${PKG_NAME}-32-build"
 print_interactive "Starting build WINE32 ..."
 make -j$(nproc) || exit -1
 
+function do_checkinstall {
+	sudo checkinstall \
+		--exclude \
+		--nodoc \
+		--pkgversion="${PKG_VER}" \
+		--pkgrelease="${PKG_REL}" \
+		--pkgsource="${NSPA_SOURCE}" \
+		--requires="libasound2 \(\>= 1.0.16\), libc6 \(\>= 2.29\), libfaudio0 \(\>= 19.06.07\), libgcc-s1 \(\>= 3.0\), libglib2.0-0 \(\>= 2.12.0\), libgphoto2-6 \(\>= 2.5.10\), libgphoto2-port12 \(\>= 2.5.10\), libgstreamer-plugins-base1.0-0 \(\>= 1.0.0\), libgstreamer1.0-0 \(\>= 1.4.0\), liblcms2-2 \(\>= 2.2+git20110628\), libldap-2.4-2 \(\>= 2.4.7\), libmpg123-0 \(\>= 1.13.7\), libopenal1 \(\>= 1.14\), libpulse0 \(\>= 0.99.1\), libudev1 \(\>= 183\), libusb-1.0-0 \(\>= 2:1.0.21\), libvkd3d1 \(\>= 1.0\), libx11-6, libxext6, libxml2 \(\>= 2.9.0\), libasound2-plugins, libncurses6 \| libncurses5 \| libncurses" \
+		--pkgarch=${1} \
+		--default
+}
+
 print_interactive "Starting install with checkinstall ..."
 cd "${WINE_DIR}/${PKG_NAME}-64-build"
-sudo checkinstall
+do_checkinstall amd64
 cd "${WINE_DIR}/${PKG_NAME}-32-build"
-sudo checkinstall
+do_checkinstall i386
