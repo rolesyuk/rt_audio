@@ -1,0 +1,37 @@
+diff --git a/dlls/kernelbase/process.c b/dlls/kernelbase/process.c
+index 6e7b23e..63eda34 100644
+--- a/dlls/kernelbase/process.c
++++ b/dlls/kernelbase/process.c
+@@ -440,6 +440,32 @@ BOOL WINAPI DECLSPEC_HOTPATCH CreateProcessInternalW( HANDLE token, const WCHAR *app_name, WCHAR *cmd_line,
+         app_name = name;
+     }
+ 
++    /* CEF HACK: Insert --single-process in command line of CefSubprocess.exe. */
++    {
++        static const WCHAR cefsubprocessexeW[] = {'C','e','f','S','u','b','p','r','o','c','e','s','s','.','e','x','e',0};
++        static const WCHAR singleprocessW[] = {' ','-','-','s','i','n','g','l','e','-','p','r','o','c','e','s','s',0};
++
++        if (StrStrW(name, cefsubprocessexeW))
++        {
++            int tidy_cmdline_len = lstrlenW(tidy_cmdline);
++            LPWSTR new_command_line;
++
++            new_command_line = HeapAlloc(GetProcessHeap(), 0,
++                sizeof(WCHAR) * (tidy_cmdline_len + (ARRAY_SIZE(singleprocessW) - 1) + 1));
++
++            if (!new_command_line) return FALSE;
++
++            memcpy(new_command_line, tidy_cmdline, tidy_cmdline_len * sizeof(WCHAR));
++            memcpy(&new_command_line[tidy_cmdline_len], singleprocessW, sizeof(singleprocessW));
++
++            TRACE("CEF hack changing command line to %s\n", debugstr_w(new_command_line));
++
++            if (tidy_cmdline != cmd_line) HeapFree( GetProcessHeap(), 0, tidy_cmdline );
++            tidy_cmdline = new_command_line;
++        }
++    }
++    /* end CEF HACK */
++
+     /* Warn if unsupported features are used */
+ 
+     if (flags & (IDLE_PRIORITY_CLASS | HIGH_PRIORITY_CLASS | REALTIME_PRIORITY_CLASS |
