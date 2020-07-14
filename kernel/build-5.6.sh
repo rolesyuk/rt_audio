@@ -1,7 +1,7 @@
 #!/bin/bash
 
 KERNEL_VERSION="5.6.19"
-PATCH_VERSION="5.6.17-rt10"
+PATCH_VERSION="5.6.19-rt11"
 
 KERNEL_URL="https://cdn.kernel.org/pub/linux/kernel/v5.x"
 PATCH_URL="https://cdn.kernel.org/pub/linux/kernel/projects/rt/5.6"
