@@ -20,11 +20,11 @@ function print_interactive {
 
 PKG_NAME=wine-nspa
 PKG_VER=5.9
-PKG_REL=16
+PKG_REL=17
 
 WINE_SOURCE="https://dl.winehq.org/wine/source/5.x/wine-${PKG_VER}.tar.xz"
 WINE_STAGING_SOURCE="https://github.com/wine-staging/wine-staging/archive/v${PKG_VER}.tar.gz"
-NSPA_SOURCE="https://github.com/nine7nine/pkgbuilds_nspa/archive/a38a8dc8a036c85828d2d47efe6713747ecfc37b.zip"
+NSPA_SOURCE="https://github.com/nine7nine/pkgbuilds_nspa/archive/ae81c72f8d2549b72520096f31a24e7bca6002b7.zip"
 
 WORKING_DIR="${PWD}"
 SCRIPT_DIR="$(dirname `readlink -f "${0}"`)"
