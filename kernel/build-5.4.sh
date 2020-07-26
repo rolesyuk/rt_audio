@@ -1,7 +1,7 @@
 #!/bin/bash
 
-KERNEL_VERSION="5.4.49"
-PATCH_VERSION="5.4.47-rt28"
+KERNEL_VERSION="5.4.53"
+PATCH_VERSION="5.4.52-rt31"
 
 KERNEL_URL="https://cdn.kernel.org/pub/linux/kernel/v5.x"
 PATCH_URL="https://cdn.kernel.org/pub/linux/kernel/projects/rt/5.4"
@@ -28,9 +28,10 @@ tar -xf "linux-${KERNEL_VERSION}.tar"
 
 cd "linux-${KERNEL_VERSION}"
 patch -p1 < ../"patch-${PATCH_VERSION}.patch" || exit -1
+patch -p1 < "${SCRIPT_DIR}/futex-wait-multiple-5.5-deadlock_fix.patch" || exit -1
 cp "${CONFIG}" .config || exit -1
 yes "" | make oldconfig
-make -j$(nproc) deb-pkg || exit -1
+make EXTRAVERSION=-fwm -j$(nproc) deb-pkg || exit -1
 cd ..
 
 rm -rf "linux-${KERNEL_VERSION}"
