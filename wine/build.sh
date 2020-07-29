@@ -20,11 +20,11 @@ function print_interactive {
 
 PKG_NAME=wine-nspa
 PKG_VER=5.9
-PKG_REL=18
+PKG_REL=19
 
 WINE_SOURCE="https://dl.winehq.org/wine/source/5.x/wine-${PKG_VER}.tar.xz"
 WINE_STAGING_SOURCE="https://github.com/wine-staging/wine-staging/archive/v${PKG_VER}.tar.gz"
-NSPA_SOURCE="https://github.com/nine7nine/pkgbuilds_nspa/archive/14db9820fe003b33463ce9901b3895f71cdec8c6.zip"
+NSPA_SOURCE="https://github.com/nine7nine/pkgbuilds_nspa/archive/a8918eaeed364caf792d0bec80092c142f37c30f.zip"
 
 WORKING_DIR="${PWD}"
 SCRIPT_DIR="$(dirname `readlink -f "${0}"`)"
@@ -80,14 +80,14 @@ done
 
 print_interactive "Starting configure WINE64 ..."
 cd "${WINE_DIR}/${PKG_NAME}-64-build"
-../configure --prefix=/opt/${PKG_NAME} --enable-win64 || exit -1
+../configure --prefix=/opt/${PKG_NAME} --enable-win64 --with-mingw=no || exit -1
 
 print_interactive "Starting build WINE64 ..."
 make -j$(nproc) || exit -1
 
 print_interactive "Starting configure WINE32 ..."
 cd "${WINE_DIR}/${PKG_NAME}-32-build"
-../configure --prefix=/opt/${PKG_NAME} --with-wine64="${WINE_DIR}/${PKG_NAME}-64-build" || exit -1
+../configure --prefix=/opt/${PKG_NAME} --with-wine64="${WINE_DIR}/${PKG_NAME}-64-build" --with-mingw=no || exit -1
 
 print_interactive "Starting build WINE32 ..."
 make -j$(nproc) || exit -1
