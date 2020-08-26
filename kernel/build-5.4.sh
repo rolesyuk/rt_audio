@@ -1,7 +1,7 @@
 #!/bin/bash
 
-KERNEL_VERSION="5.4.54"
-PATCH_VERSION="5.4.52-rt31"
+KERNEL_VERSION="5.4.60"
+PATCH_VERSION="5.4.59-rt36"
 
 KERNEL_URL="https://cdn.kernel.org/pub/linux/kernel/v5.x"
 PATCH_URL="https://cdn.kernel.org/pub/linux/kernel/projects/rt/5.4"
@@ -47,4 +47,6 @@ gpg --verify "patch-${PATCH_VERSION}.patch.sign" "patch-${PATCH_VERSION}.patch" 
 
 build_kernel fwm-rt
 build_kernel fwm
+
+ls | grep -vE 'headers|image' | xargs rm
 )
