@@ -1,7 +1,7 @@
 #!/bin/bash
 
 KERNEL_VERSION="5.6.19"
-PATCH_VERSION="5.6.19-rt11"
+PATCH_VERSION="5.6.19-rt12"
 
 KERNEL_URL="https://cdn.kernel.org/pub/linux/kernel/v5.x"
 PATCH_URL="https://cdn.kernel.org/pub/linux/kernel/projects/rt/5.6"
@@ -35,4 +35,5 @@ make EXTRAVERSION=-fwm -j$(nproc) deb-pkg || exit -1
 cd ..
 
 rm -rf "linux-${KERNEL_VERSION}"
+ls | grep -vE 'headers|image' | xargs rm
 )
