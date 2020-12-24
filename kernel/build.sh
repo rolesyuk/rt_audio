@@ -19,7 +19,7 @@ function build {
 	tar -xf "linux-${KERNEL_VERSION}.tar"
 	cd "linux-${KERNEL_VERSION}"
 
-	if [ "${2}" == "opt" ]; then
+	if [ "${1}" == "opt" -o "${2}" == "opt" ]; then
 		export KCFLAGS="-march=native" KCPPFLAGS="-march=native"
 		sed -i 's/-mtune=generic/-march=native/' arch/x86/Makefile
 		sed -i   's/-march=core2/-march=native/' arch/x86/Makefile
@@ -54,7 +54,13 @@ function build {
 			make EXTRAVERSION=-fwm -j$(nproc) deb-pkg || exit -1
 		fi
 	else
-		exit -1
+		cp "${CONFIG_NO_RT}" .config || exit -1
+		yes "" | make oldconfig
+		if [ "${1}" == "opt" ]; then
+			make CC="${COMPILER}" -j$(nproc) deb-pkg || exit -1
+		else
+			make -j$(nproc) deb-pkg || exit -1
+		fi
 	fi
 
 	cd ..
