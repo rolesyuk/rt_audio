@@ -1,6 +1,6 @@
 #!/bin/bash
 
-KERNEL_VERSION="5.10.48"
+KERNEL_VERSION="5.10.50"
 PATCH_VERSION="5.10.47-rt45"
 KERNEL_URL="https://cdn.kernel.org/pub/linux/kernel/v5.x"
 PATCH_URL="https://cdn.kernel.org/pub/linux/kernel/projects/rt/5.10"
