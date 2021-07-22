@@ -23,45 +23,27 @@ function build {
 		export KCFLAGS="-march=native" KCPPFLAGS="-march=native"
 		sed -i 's/-mtune=generic/-march=native/' arch/x86/Makefile
 		sed -i   's/-march=core2/-march=native/' arch/x86/Makefile
+		export CC="${COMPILER}"
 	fi
 
 	if   [ "${1}" == "rt" ]; then
 		patch -p1 < ../"patch-${PATCH_VERSION}.patch" || exit -1
 		cp "${CONFIG_RT}" .config || exit -1
-		yes "" | make oldconfig
-		if [ "${2}" == "opt" ]; then
-			make CC="${COMPILER}" -j$(nproc) deb-pkg || exit -1
-		else
-			make -j$(nproc) deb-pkg || exit -1
-		fi
 	elif [ "${1}" == "fwm-rt" ]; then
 		patch -p1 < ../"patch-${PATCH_VERSION}.patch" || exit -1
 		patch -p1 < "${SCRIPT_DIR}/futex-wait-multiple-5.5-deadlock_fix.patch" || exit -1
 		cp "${CONFIG_RT}" .config || exit -1
-		yes "" | make oldconfig
-		if [ "${2}" == "opt" ]; then
-			make CC="${COMPILER}" EXTRAVERSION=-fwm -j$(nproc) deb-pkg || exit -1
-		else
-			make EXTRAVERSION=-fwm -j$(nproc) deb-pkg || exit -1
-		fi
+		export EXTRAVERSION=-fwm
 	elif [ "${1}" == "fwm" ]; then
 		patch -p1 < "${SCRIPT_DIR}/futex-wait-multiple-5.5-deadlock_fix.patch" || exit -1
 		cp "${CONFIG_NO_RT}" .config || exit -1
-		yes "" | make oldconfig
-		if [ "${2}" == "opt" ]; then
-			make CC="${COMPILER}" EXTRAVERSION=-fwm -j$(nproc) deb-pkg || exit -1
-		else
-			make EXTRAVERSION=-fwm -j$(nproc) deb-pkg || exit -1
-		fi
+		export EXTRAVERSION=-fwm
 	else
 		cp "${CONFIG_NO_RT}" .config || exit -1
-		yes "" | make oldconfig
-		if [ "${1}" == "opt" ]; then
-			make CC="${COMPILER}" -j$(nproc) deb-pkg || exit -1
-		else
-			make -j$(nproc) deb-pkg || exit -1
-		fi
 	fi
+
+	yes "" | make oldconfig
+	yes "" | make CC=$CC EXTRAVERSION=$EXTRAVERSION -j$(nproc) deb-pkg || exit -1
 
 	cd ..
 	rm -rf "linux-${KERNEL_VERSION}"
