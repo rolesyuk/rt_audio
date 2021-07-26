@@ -24,6 +24,8 @@ function build {
 		sed -i 's/-mtune=generic/-march=native/' arch/x86/Makefile
 		sed -i   's/-march=core2/-march=native/' arch/x86/Makefile
 		export CC="${COMPILER}"
+	else
+		export CC="gcc"
 	fi
 
 	if   [ "${1}" == "rt" ]; then
