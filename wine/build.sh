@@ -7,24 +7,35 @@
 # for the tip see ./configure output at the end, unmet dependencies are shown
 # for this script to work 'checkinstall' package is needed
 
-INTERACTIVE=0
+CONFIG=0
 
-function print_interactive {
-	echo
-	echo "${1}"
-	if [ "${INTERACTIVE}" -ne 0 ]; then
-		echo "Press ENTER to continue ..."
-		read
-	fi
-}
+if [ "${CONFIG}" -eq 0 ]; then
+	INTERACTIVE=0
+	BUILD_STAGING=1
+	BUILD_NSPA=1
+	BUILD_FROM_GIT=0
+	PKG_NAME=wine-nspa
+	PKG_VER=5.9
+	PKG_REL=19
+elif [ "${CONFIG}" -eq 1 ]; then
+	INTERACTIVE=0
+	BUILD_STAGING=0
+	BUILD_NSPA=0
+	BUILD_FROM_GIT=1
+	PKG_NAME=wine-proton
+	PKG_VER=6.3
+	PKG_REL=0
+else
+	echo "No such configuration. Exiting..."
+	exit -1
+fi
 
-PKG_NAME=wine-nspa
-PKG_VER=5.9
-PKG_REL=19
-
-WINE_SOURCE="https://dl.winehq.org/wine/source/5.x/wine-${PKG_VER}.tar.xz"
+WINE_BUILD_OPTIONS="--without-ldap --without-curses --without-oss --disable-winemenubuilder --disable-win16 --disable-tests"
+WINE_TAR_SOURCE="https://dl.winehq.org/wine/source/5.x/wine-${PKG_VER}.tar.xz"
 WINE_STAGING_SOURCE="https://github.com/wine-staging/wine-staging/archive/v${PKG_VER}.tar.gz"
 NSPA_SOURCE="https://github.com/nine7nine/pkgbuilds_nspa/archive/a8918eaeed364caf792d0bec80092c142f37c30f.zip"
+WINE_GIT_SOURCE="https://github.com/ValveSoftware/wine.git"
+WINE_GIT_BRANCH="proton_6.3"
 
 WORKING_DIR="${PWD}"
 SCRIPT_DIR="$(dirname `readlink -f "${0}"`)"
@@ -36,58 +47,94 @@ NSPA_DIR="${WORKING_DIR}/pkgbuilds_nspa-$(basename ${NSPA_SOURCE} | awk -F '.' '
 # for details see https://linuxmusicians.com/viewtopic.php?t=20660&p=111944
 PATCHES=("${SCRIPT_DIR}/cef.patch")
 
-if [ ! -r $(basename "${WINE_SOURCE}") ]; then
-	wget -c "${WINE_SOURCE}" || exit -1
+if [ "${BUILD_FROM_GIT}" -eq 1 ]; then
+	if [ ! -d "${WINE_DIR}" ]; then
+		git clone -b "${WINE_GIT_BRANCH}" "${WINE_GIT_SOURCE}" "${WINE_DIR}" || exit -1
+	else
+		cd "${WINE_DIR}"
+		git clean -xdf
+		git reset --hard
+		git checkout "${WINE_GIT_BRANCH}"
+		git pull || exit -1
+	fi
+	DPKG_SOURCE="${WINE_GIT_SOURCE}"
+else
+	if [ ! -r $(basename "${WINE_TAR_SOURCE}") ]; then
+		wget -c "${WINE_TAR_SOURCE}" || exit -1
+	fi
+	rm -rf "${WINE_DIR}"
+	tar -xJf $(basename "${WINE_TAR_SOURCE}") || exit -1
+	DPKG_SOURCE="${WINE_TAR_SOURCE}"
 fi
-rm -rf "${WINE_DIR}"
-tar -xJf $(basename "${WINE_SOURCE}") || exit -1
 
-if [ ! -r $(basename "${WINE_STAGING_SOURCE}") ]; then
-	wget -c "${WINE_STAGING_SOURCE}" || exit -1
-fi
-rm -rf "${WINE_STAGING_DIR}"
-tar -xzf $(basename "${WINE_STAGING_SOURCE}") || exit -1
+if [ "${BUILD_STAGING}" -eq 1 ]; then
+	if [ ! -r $(basename "${WINE_STAGING_SOURCE}") ]; then
+		wget -c "${WINE_STAGING_SOURCE}" || exit -1
+	fi
+	rm -rf "${WINE_STAGING_DIR}"
+	tar -xzf $(basename "${WINE_STAGING_SOURCE}") || exit -1
 
-if [ ! -r $(basename "${NSPA_SOURCE}") ]; then
-	wget -c "${NSPA_SOURCE}" || exit -1
+	# apply wine-staging patchset
+	pushd "${WINE_STAGING_DIR}/patches"
+		./patchinstall.sh DESTDIR="${WINE_DIR}" --all || exit -1
+	popd
+	DPKG_SOURCE="${WINE_STAGING_SOURCE}"
 fi
-rm -rf "${NSPA_DIR}"
-unzip $(basename "${NSPA_SOURCE}") || exit -1
+
+if [ "${BUILD_NSPA}" -eq 1 ]; then
+	if [ ! -r $(basename "${NSPA_SOURCE}") ]; then
+		wget -c "${NSPA_SOURCE}" || exit -1
+	fi
+	rm -rf "${NSPA_DIR}"
+	unzip $(basename "${NSPA_SOURCE}") || exit -1
+
+	# apply nspa patchset
+	cd ${WINE_DIR}
+	N=1
+	grep -E '^ *patch' ${NSPA_DIR}/wine-nspa/PKGBUILD | sed 's/srcdir/{NSPA_DIR}\/wine-nspa/' | while read PATCH; do
+		echo "$(printf '%02d:' ${N}) $(eval echo ${PATCH})"
+		N=$((N+1))
+		eval "${PATCH}"
+	done
+	DPKG_SOURCE="${NSPA_SOURCE}"
+fi
 
 cd ${WINE_DIR}
-
-# apply wine-staging patchset
-pushd "${WINE_STAGING_DIR}/patches"
-./patchinstall.sh DESTDIR="${WINE_DIR}" --all || exit -1
-popd
 
 # get rid of old build dirs
 rm -rf ${PKG_NAME}-{32,64}-build
 mkdir ${PKG_NAME}-{32,64}-build
-
-# apply nspa patchset
-N=1
-grep -E '^ *patch' ${NSPA_DIR}/wine-nspa/PKGBUILD | sed 's/srcdir/{NSPA_DIR}\/wine-nspa/' | while read PATCH; do
-	echo "$(printf '%02d:' ${N}) $(eval echo ${PATCH})"
-	N=$((N+1))
-	eval "${PATCH}"
-done
 
 # apply cef patch
 for PATCH in ${PATCHES[@]}; do
 	patch -p1 < "${PATCH}" || exit -1
 done
 
+function print_interactive {
+	echo
+	echo "${1}"
+	if [ "${INTERACTIVE}" -ne 0 ]; then
+		echo "Press ENTER to continue ..."
+		read
+	fi
+}
+
+print_interactive "Starting configure WINE ..."
+cd "${WINE_DIR}"
+dlls/winevulkan/make_vulkan
+tools/make_requests
+autoreconf -f
+
 print_interactive "Starting configure WINE64 ..."
 cd "${WINE_DIR}/${PKG_NAME}-64-build"
-../configure --prefix=/opt/${PKG_NAME} --enable-win64 --with-mingw=no || exit -1
+../configure --prefix=/opt/${PKG_NAME} --enable-win64 --with-mingw=no ${WINE_BUILD_OPTIONS} || exit -1
 
 print_interactive "Starting build WINE64 ..."
 make -j$(nproc) || exit -1
 
 print_interactive "Starting configure WINE32 ..."
 cd "${WINE_DIR}/${PKG_NAME}-32-build"
-../configure --prefix=/opt/${PKG_NAME} --with-wine64="${WINE_DIR}/${PKG_NAME}-64-build" --with-mingw=no || exit -1
+../configure --prefix=/opt/${PKG_NAME} --with-wine64="${WINE_DIR}/${PKG_NAME}-64-build" --with-mingw=no ${WINE_BUILD_OPTIONS} || exit -1
 
 print_interactive "Starting build WINE32 ..."
 make -j$(nproc) || exit -1
@@ -98,7 +145,7 @@ function do_checkinstall {
 		--nodoc \
 		--pkgversion="${PKG_VER}" \
 		--pkgrelease="${PKG_REL}" \
-		--pkgsource="${NSPA_SOURCE}" \
+		--pkgsource="${DPKG_SOURCE}" \
 		--requires="libasound2 \(\>= 1.0.16\), libc6 \(\>= 2.29\), libfaudio0 \(\>= 19.06.07\), libgcc-s1 \(\>= 3.0\), libglib2.0-0 \(\>= 2.12.0\), libgphoto2-6 \(\>= 2.5.10\), libgphoto2-port12 \(\>= 2.5.10\), libgstreamer-plugins-base1.0-0 \(\>= 1.0.0\), libgstreamer1.0-0 \(\>= 1.4.0\), liblcms2-2 \(\>= 2.2+git20110628\), libldap-2.4-2 \(\>= 2.4.7\), libmpg123-0 \(\>= 1.13.7\), libopenal1 \(\>= 1.14\), libpulse0 \(\>= 0.99.1\), libudev1 \(\>= 183\), libusb-1.0-0 \(\>= 2:1.0.21\), libvkd3d1 \(\>= 1.0\), libx11-6, libxext6, libxml2 \(\>= 2.9.0\), libasound2-plugins, libncurses6 \| libncurses5 \| libncurses" \
 		--pkgarch=${1} \
 		--default
