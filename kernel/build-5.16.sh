@@ -1,7 +1,7 @@
 #!/bin/bash
 
 KERNEL_VERSION="5.16-rc3"
-PATCH_VERSION="5.16-rc3-rt6"
+PATCH_VERSION="5.16-rc3-rt7"
 #KERNEL_URL="https://cdn.kernel.org/pub/linux/kernel/v5.x"
 KERNEL_URL="https://git.kernel.org/torvalds/t"
 PATCH_URL="https://cdn.kernel.org/pub/linux/kernel/projects/rt/5.16"

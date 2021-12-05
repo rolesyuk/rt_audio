@@ -7,8 +7,14 @@
 # for the tip see ./configure output at the end, unmet dependencies are shown
 # for this script to work 'checkinstall' package is needed
 
-CONFIG=0
+CONFIG=3
 
+WINE_BUILD_OPTIONS=
+
+WORKING_DIR="${PWD}"
+SCRIPT_DIR="$(dirname `readlink -f "${0}"`)"
+
+PATCHES=()
 if [ "${CONFIG}" -eq 0 ]; then
 	INTERACTIVE=0
 	BUILD_STAGING=1
@@ -17,35 +23,55 @@ if [ "${CONFIG}" -eq 0 ]; then
 	PKG_NAME=wine-nspa
 	PKG_VER=5.9
 	PKG_REL=19
+	WINE_TAR_SOURCE="https://dl.winehq.org/wine/source/5.x/wine-${PKG_VER}.tar.xz"
+	NSPA_SOURCE="https://github.com/nine7nine/pkgbuilds_nspa/archive/a8918eaeed364caf792d0bec80092c142f37c30f.zip"
+	NSPA_DIR="${WORKING_DIR}/pkgbuilds_nspa-$(basename ${NSPA_SOURCE} | awk -F '.' '{print $1}')"
 elif [ "${CONFIG}" -eq 1 ]; then
 	INTERACTIVE=0
 	BUILD_STAGING=0
 	BUILD_NSPA=0
 	BUILD_FROM_GIT=1
-	PKG_NAME=wine-proton
+	PKG_NAME=wine-proton-exp
 	PKG_VER=6.3
 	PKG_REL=0
+	WINE_BUILD_OPTIONS="--without-ldap --without-curses --without-oss --disable-winemenubuilder --disable-win16 --disable-tests"
+	WINE_GIT_SOURCE="https://github.com/ValveSoftware/wine.git"
+	WINE_GIT_BRANCH="experimental_6.3"
+elif [ "${CONFIG}" -eq 2 ]; then
+	INTERACTIVE=0
+	BUILD_STAGING=0
+	BUILD_NSPA=0
+	BUILD_FROM_GIT=0
+	PKG_NAME=wine-devel-cef-fsync
+	PKG_VER=6.22
+	PKG_REL=0
+	WINE_TAR_SOURCE="https://dl.winehq.org/wine/source/6.x/wine-${PKG_VER}.tar.xz"
+	PATCHES+=("${SCRIPT_DIR}/esync-unix-mainline.patch"
+		  "${SCRIPT_DIR}/fsync-unix-mainline.patch"
+		  "${SCRIPT_DIR}/fsync_futex_waitv.patch")
+elif [ "${CONFIG}" -eq 3 ]; then
+	INTERACTIVE=0
+	BUILD_STAGING=0
+	BUILD_NSPA=0
+	BUILD_FROM_GIT=0
+	PKG_NAME=wine-stable-cef-fsync
+	PKG_VER=6.0.2
+	PKG_REL=0
+	WINE_TAR_SOURCE="https://dl.winehq.org/wine/source/6.0/wine-${PKG_VER}.tar.xz"
+	PATCHES+=("${SCRIPT_DIR}/fsync-6.0.patch"
+		  "${SCRIPT_DIR}/fsync_futex_waitv.patch")
 else
 	echo "No such configuration. Exiting..."
 	exit -1
 fi
 
-WINE_BUILD_OPTIONS="--without-ldap --without-curses --without-oss --disable-winemenubuilder --disable-win16 --disable-tests"
-WINE_TAR_SOURCE="https://dl.winehq.org/wine/source/5.x/wine-${PKG_VER}.tar.xz"
-WINE_STAGING_SOURCE="https://github.com/wine-staging/wine-staging/archive/v${PKG_VER}.tar.gz"
-NSPA_SOURCE="https://github.com/nine7nine/pkgbuilds_nspa/archive/a8918eaeed364caf792d0bec80092c142f37c30f.zip"
-WINE_GIT_SOURCE="https://github.com/ValveSoftware/wine.git"
-WINE_GIT_BRANCH="proton_6.3"
-
-WORKING_DIR="${PWD}"
-SCRIPT_DIR="$(dirname `readlink -f "${0}"`)"
 WINE_DIR="${WORKING_DIR}/wine-${PKG_VER}"
+WINE_STAGING_SOURCE="https://github.com/wine-staging/wine-staging/archive/v${PKG_VER}.tar.gz"
 WINE_STAGING_DIR="${WORKING_DIR}/wine-staging-${PKG_VER}"
-NSPA_DIR="${WORKING_DIR}/pkgbuilds_nspa-$(basename ${NSPA_SOURCE} | awk -F '.' '{print $1}')"
 
 # fixes BIAS FX 2 GUI not-showing isssue
 # for details see https://linuxmusicians.com/viewtopic.php?t=20660&p=111944
-PATCHES=("${SCRIPT_DIR}/cef.patch")
+PATCHES+=("${SCRIPT_DIR}/cef.patch")
 
 if [ "${BUILD_FROM_GIT}" -eq 1 ]; then
 	if [ ! -d "${WINE_DIR}" ]; then
@@ -101,12 +127,15 @@ fi
 
 cd ${WINE_DIR}
 
-# get rid of old build dirs
+# get rid of the old build dirs
 rm -rf ${PKG_NAME}-{32,64}-build
 mkdir ${PKG_NAME}-{32,64}-build
 
-# apply cef patch
+# apply custom patches
+N=1
 for PATCH in ${PATCHES[@]}; do
+	echo "$(printf '%02d:' ${N}) ${PATCH}"
+	N=$((N+1))
 	patch -p1 < "${PATCH}" || exit -1
 done
 
