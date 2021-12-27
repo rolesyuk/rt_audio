@@ -7,7 +7,7 @@
 # for the tip see ./configure output at the end, unmet dependencies are shown
 # for this script to work 'checkinstall' package is needed
 
-CONFIG=3
+CONFIG=4
 
 WINE_BUILD_OPTIONS=
 
@@ -60,6 +60,15 @@ elif [ "${CONFIG}" -eq 3 ]; then
 	WINE_TAR_SOURCE="https://dl.winehq.org/wine/source/6.0/wine-${PKG_VER}.tar.xz"
 	PATCHES+=("${SCRIPT_DIR}/fsync-6.0.patch"
 		  "${SCRIPT_DIR}/fsync_futex_waitv.patch")
+elif [ "${CONFIG}" -eq 4 ]; then
+	INTERACTIVE=0
+	BUILD_STAGING=0
+	BUILD_NSPA=0
+	BUILD_FROM_GIT=0
+	PKG_NAME=wine-stable-cef
+	PKG_VER=6.0.2
+	PKG_REL=0
+	WINE_TAR_SOURCE="https://dl.winehq.org/wine/source/6.0/wine-${PKG_VER}.tar.xz"
 else
 	echo "No such configuration. Exiting..."
 	exit -1
