@@ -1,0 +1,13 @@
+#!/bin/sh
+exec tail -n +3 $0
+# This file provides an easy way to add custom menu entries.  Simply type the
+# menu entries you want to add after this comment.  Be careful not to change
+# the 'exec tail' line above.
+
+kernel_version='5.16.0-rt13'
+root_uuid='2f15df07-1c58-4200-98c5-e022d9e419bf'
+
+menuentry 'Ubuntu, Low Latency Audio' {
+	linux /boot/vmlinuz-$kernel_version root=UUID=$root_uuid ro quiet splash panic=3 panic_on_oops=1 mitigations=off pcie_aspm.policy=performance cpufreq.default_governor=performance idle=poll cpuidle.governor=menu workqueue.power_efficient=0 $vt_handoff
+	initrd /boot/initrd.img-$kernel_version
+}

@@ -10,7 +10,7 @@ CONFIG_RT="${SCRIPT_DIR}/config-5.16-rt"
 CONFIG_NO_RT=""
 COMPILER="/usr/bin/gcc-11"
 
-source "${SCRIPT_DIR}/build.sh"
+source "${SCRIPT_DIR}/build-rc.sh"
 
 download
 build rt opt

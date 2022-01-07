@@ -7,7 +7,7 @@
 # for the tip see ./configure output at the end, unmet dependencies are shown
 # for this script to work 'checkinstall' package is needed
 
-CONFIG=4
+CONFIG=0
 
 WINE_BUILD_OPTIONS=
 

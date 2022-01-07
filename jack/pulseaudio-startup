@@ -1,8 +1,8 @@
 # Autostart
-/usr/bin/pulseaudio --daemonize --log-target=journal
+pulseaudio --daemonize --log-target=journal
 
 # QJackCtl
-/usr/bin/pulseaudio --kill; killall -9 jackd
-/usr/bin/pulseaudio --daemonize --log-target=journal
-/usr/bin/pulseaudio --kill
-/usr/bin/pulseaudio --kill; killall -9 jackd
+pulseaudio --kill; killall -9 jackd; sudo setup-audio.sh
+pulseaudio --daemonize --log-target=journal
+pulseaudio --kill
+pulseaudio --kill; killall -9 jackd

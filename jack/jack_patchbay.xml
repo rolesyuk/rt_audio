@@ -4,16 +4,10 @@
   <socket client="system" exclusive="off" type="jack-audio" name="system">
    <plug>capture_1</plug>
    <plug>capture_2</plug>
-   <plug>capture_3</plug>
-   <plug>capture_4</plug>
   </socket>
-  <socket client="system" exclusive="off" type="jack-audio" name="system_22">
-   <plug>capture_2</plug>
-   <plug>capture_2</plug>
-  </socket>
-  <socket client="system" exclusive="off" type="jack-audio" name="system_34">
-   <plug>capture_3</plug>
-   <plug>capture_4</plug>
+  <socket client="system" exclusive="off" type="jack-audio" name="system_11">
+   <plug>capture_1</plug>
+   <plug>capture_1</plug>
   </socket>
   <socket client="PulseAudio JACK Sink" exclusive="off" type="jack-audio" name="PulseAudio JACK Sink">
    <plug>front-left</plug>
@@ -47,6 +41,10 @@
    <plug>out_2</plug>
   </socket>
   <socket client="Pianoteq" name="Pianoteq" exclusive="off" type="jack-audio">
+   <plug>out_1</plug>
+   <plug>out_2</plug>
+  </socket>
+  <socket client="Archetype Petrucci" name="Archetype Petrucci" exclusive="off" type="jack-audio">
    <plug>out_1</plug>
    <plug>out_2</plug>
   </socket>
@@ -93,8 +91,6 @@
   <socket client="system" exclusive="off" type="jack-audio" name="system">
    <plug>playback_1</plug>
    <plug>playback_2</plug>
-   <plug>playback_3</plug>
-   <plug>playback_4</plug>
   </socket>
   <socket client="system" exclusive="off" type="jack-audio" name="system_1">
    <plug>playback_1</plug>
@@ -117,12 +113,10 @@
    <plug>in2</plug>
    <plug>in3</plug>
    <plug>in4</plug>
-   <plug>in5</plug>
-   <plug>in6</plug>
   </socket>
-  <socket client="REAPER" name="REAPER_56" exclusive="off" type="jack-audio">
-   <plug>in5</plug>
-   <plug>in6</plug>
+  <socket client="REAPER" name="REAPER_34" exclusive="off" type="jack-audio">
+   <plug>in3</plug>
+   <plug>in4</plug>
   </socket>
   <socket client="REAPER" type="jack-midi" name="REAPER" exclusive="off">
    <plug>MIDI Input 1</plug>
@@ -136,14 +130,16 @@
    <plug>in_2</plug>
    <plug>in_3</plug>
    <plug>in_4</plug>
-   <plug>in_5</plug>
-   <plug>in_6</plug>
   </socket>
   <socket client="reaper" name="reaper_56" exclusive="off" type="jack-audio">
-   <plug>in_5</plug>
-   <plug>in_6</plug>
+   <plug>in_3</plug>
+   <plug>in_4</plug>
   </socket>
   <socket client="BIAS FX 2_x64" name="BIAS FX 2_x64" exclusive="off" type="jack-audio">
+   <plug>in_1</plug>
+   <plug>in_2</plug>
+  </socket>
+  <socket client="Archetype Petrucci" name="Archetype Petrucci" exclusive="off" type="jack-audio">
    <plug>in_1</plug>
    <plug>in_2</plug>
   </socket>
@@ -158,8 +154,7 @@
  </input-sockets>
  <slots/>
  <cables>
-  <cable output="system_22" input="PulseAudio JACK Source" type="jack-audio"/>
-  <cable output="system_34" input="PulseAudio JACK Source" type="jack-audio"/>
+  <cable output="system_11" input="PulseAudio JACK Source" type="jack-audio"/>
 
   <cable output="PulseAudio JACK Sink" input="system" type="jack-audio"/>
 
@@ -191,20 +186,26 @@
   <cable output="system" input="BIAS FX 2_x64" type="jack-audio"/>
   <cable output="BIAS FX 2_x64" input="system" type="jack-audio"/>
   <cable output="BIAS FX 2_x64" input="PulseAudio JACK Source" type="jack-audio"/>
-  <cable output="BIAS FX 2_x64" input="reaper_56" type="jack-audio"/>
-  <cable output="BIAS FX 2_x64" input="REAPER_56" type="jack-audio"/>
+  <cable output="BIAS FX 2_x64" input="reaper_34" type="jack-audio"/>
+  <cable output="BIAS FX 2_x64" input="REAPER_34" type="jack-audio"/>
+
+  <cable output="system" input="Archetype Petrucci" type="jack-audio"/>
+  <cable output="Archetype Petrucci" input="system" type="jack-audio"/>
+  <cable output="Archetype Petrucci" input="PulseAudio JACK Source" type="jack-audio"/>
+  <cable output="Archetype Petrucci" input="reaper_34" type="jack-audio"/>
+  <cable output="Archetype Petrucci" input="REAPER_34" type="jack-audio"/>
 
   <cable output="system" input="Archetype Nolly" type="jack-audio"/>
   <cable output="Archetype Nolly" input="system" type="jack-audio"/>
   <cable output="Archetype Nolly" input="PulseAudio JACK Source" type="jack-audio"/>
-  <cable output="Archetype Nolly" input="reaper_56" type="jack-audio"/>
-  <cable output="Archetype Nolly" input="REAPER_56" type="jack-audio"/>
+  <cable output="Archetype Nolly" input="reaper_34" type="jack-audio"/>
+  <cable output="Archetype Nolly" input="REAPER_34" type="jack-audio"/>
 
   <cable output="system" input="OMEGA Ampworks Granophyre" type="jack-audio"/>
   <cable output="OMEGA Ampworks Granophyre" input="system" type="jack-audio"/>
   <cable output="OMEGA Ampworks Granophyre" input="PulseAudio JACK Source" type="jack-audio"/>
-  <cable output="OMEGA Ampworks Granophyre" input="reaper_56" type="jack-audio"/>
-  <cable output="OMEGA Ampworks Granophyre" input="REAPER_56" type="jack-audio"/>
+  <cable output="OMEGA Ampworks Granophyre" input="reaper_34" type="jack-audio"/>
+  <cable output="OMEGA Ampworks Granophyre" input="REAPER_34" type="jack-audio"/>
 
   <cable type="jack-audio" output="system" input="REAPER"/>
   <cable type="jack-midi" output="system_1" input="REAPER"/>

@@ -8,7 +8,7 @@ NEW_PACKAGES="https://mirrors.kernel.org/ubuntu/pool/universe/j/jackd2/jackd2_1.
               https://mirrors.kernel.org/ubuntu/pool/main/j/jackd2/libjack-jackd2-dev_1.9.14-0ubuntu3_amd64.deb
               https://mirrors.kernel.org/ubuntu/pool/main/j/jackd2/libjack-jackd2-dev_1.9.14-0ubuntu3_i386.deb"
 
-wget -c ${NEW_PACKAGES} || exit -1
+#wget -c ${NEW_PACKAGES} || exit -1 # Packages are no longer available
 sha256sum -c checksums.sha256 || exit -1
 if [ -n "${OLD_PACKAGES}" ]; then
 	sudo dpkg -P --force-depends ${OLD_PACKAGES} || exit -1
