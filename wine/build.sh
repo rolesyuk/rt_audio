@@ -7,9 +7,11 @@
 # for the tip see ./configure output at the end, unmet dependencies are shown
 # for this script to work 'checkinstall' package is needed
 
-CONFIG=0
+CONFIG=6
 
 WINE_BUILD_OPTIONS=
+CC="/usr/bin/gcc-11"
+CFLAGS="-march=native -O2"
 
 WORKING_DIR="${PWD}"
 SCRIPT_DIR="$(dirname `readlink -f "${0}"`)"
@@ -65,10 +67,28 @@ elif [ "${CONFIG}" -eq 4 ]; then
 	BUILD_STAGING=0
 	BUILD_NSPA=0
 	BUILD_FROM_GIT=0
-	PKG_NAME=wine-stable-cef
+	PKG_NAME=wine-6-stable-cef
 	PKG_VER=6.0.2
 	PKG_REL=0
 	WINE_TAR_SOURCE="https://dl.winehq.org/wine/source/6.0/wine-${PKG_VER}.tar.xz"
+elif [ "${CONFIG}" -eq 5 ]; then
+	INTERACTIVE=0
+	BUILD_STAGING=0
+	BUILD_NSPA=0
+	BUILD_FROM_GIT=0
+	PKG_NAME=wine-7-stable-cef
+	PKG_VER=7.0-rc5
+	PKG_REL=0
+	WINE_TAR_SOURCE="https://dl.winehq.org/wine/source/7.0/wine-${PKG_VER}.tar.xz"
+elif [ "${CONFIG}" -eq 6 ]; then
+	INTERACTIVE=0
+	BUILD_STAGING=1
+	BUILD_NSPA=0
+	BUILD_FROM_GIT=0
+	PKG_NAME=wine-7-staging-cef
+	PKG_VER=7.0-rc5
+	PKG_REL=0
+	WINE_TAR_SOURCE="https://dl.winehq.org/wine/source/7.0/wine-${PKG_VER}.tar.xz"
 else
 	echo "No such configuration. Exiting..."
 	exit -1
@@ -165,14 +185,14 @@ autoreconf -f
 
 print_interactive "Starting configure WINE64 ..."
 cd "${WINE_DIR}/${PKG_NAME}-64-build"
-../configure --prefix=/opt/${PKG_NAME} --enable-win64 --with-mingw=no ${WINE_BUILD_OPTIONS} || exit -1
+../configure --prefix=/opt/${PKG_NAME} --enable-win64 --with-mingw=no ${WINE_BUILD_OPTIONS} CC="${CC}" CFLAGS="${CFLAGS}" || exit -1
 
 print_interactive "Starting build WINE64 ..."
 make -j$(nproc) || exit -1
 
 print_interactive "Starting configure WINE32 ..."
 cd "${WINE_DIR}/${PKG_NAME}-32-build"
-../configure --prefix=/opt/${PKG_NAME} --with-wine64="${WINE_DIR}/${PKG_NAME}-64-build" --with-mingw=no ${WINE_BUILD_OPTIONS} || exit -1
+../configure --prefix=/opt/${PKG_NAME} --with-wine64="${WINE_DIR}/${PKG_NAME}-64-build" --with-mingw=no ${WINE_BUILD_OPTIONS} CC="${CC}" CFLAGS="${CFLAGS}" || exit -1
 
 print_interactive "Starting build WINE32 ..."
 make -j$(nproc) || exit -1
