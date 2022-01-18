@@ -7,11 +7,11 @@
 # for the tip see ./configure output at the end, unmet dependencies are shown
 # for this script to work 'checkinstall' package is needed
 
-CONFIG=6
+CONFIG=2
 
 WINE_BUILD_OPTIONS=
 CC="/usr/bin/gcc-11"
-CFLAGS="-march=native -O2"
+CFLAGS="-march=native -O3"
 
 WORKING_DIR="${PWD}"
 SCRIPT_DIR="$(dirname `readlink -f "${0}"`)"
@@ -45,9 +45,9 @@ elif [ "${CONFIG}" -eq 2 ]; then
 	BUILD_NSPA=0
 	BUILD_FROM_GIT=0
 	PKG_NAME=wine-devel-cef-fsync
-	PKG_VER=6.22
+	PKG_VER=7.0-rc6
 	PKG_REL=0
-	WINE_TAR_SOURCE="https://dl.winehq.org/wine/source/6.x/wine-${PKG_VER}.tar.xz"
+	WINE_TAR_SOURCE="https://dl.winehq.org/wine/source/7.x/wine-${PKG_VER}.tar.xz"
 	PATCHES+=("${SCRIPT_DIR}/esync-unix-mainline.patch"
 		  "${SCRIPT_DIR}/fsync-unix-mainline.patch"
 		  "${SCRIPT_DIR}/fsync_futex_waitv.patch")
@@ -77,7 +77,7 @@ elif [ "${CONFIG}" -eq 5 ]; then
 	BUILD_NSPA=0
 	BUILD_FROM_GIT=0
 	PKG_NAME=wine-7-stable-cef
-	PKG_VER=7.0-rc5
+	PKG_VER=7.0-rc6
 	PKG_REL=0
 	WINE_TAR_SOURCE="https://dl.winehq.org/wine/source/7.0/wine-${PKG_VER}.tar.xz"
 elif [ "${CONFIG}" -eq 6 ]; then
@@ -86,7 +86,7 @@ elif [ "${CONFIG}" -eq 6 ]; then
 	BUILD_NSPA=0
 	BUILD_FROM_GIT=0
 	PKG_NAME=wine-7-staging-cef
-	PKG_VER=7.0-rc5
+	PKG_VER=7.0-rc6
 	PKG_REL=0
 	WINE_TAR_SOURCE="https://dl.winehq.org/wine/source/7.0/wine-${PKG_VER}.tar.xz"
 else
