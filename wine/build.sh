@@ -7,7 +7,7 @@
 # for the tip see ./configure output at the end, unmet dependencies are shown
 # for this script to work 'checkinstall' package is needed
 
-CONFIG=2
+CONFIG=3
 
 WINE_BUILD_OPTIONS=
 CC="/usr/bin/gcc-11"
@@ -45,9 +45,9 @@ elif [ "${CONFIG}" -eq 2 ]; then
 	BUILD_NSPA=0
 	BUILD_FROM_GIT=0
 	PKG_NAME=wine-devel-cef-fsync
-	PKG_VER=7.0-rc6
+	PKG_VER=7.0
 	PKG_REL=0
-	WINE_TAR_SOURCE="https://dl.winehq.org/wine/source/7.x/wine-${PKG_VER}.tar.xz"
+	WINE_TAR_SOURCE="https://dl.winehq.org/wine/source/7.0/wine-${PKG_VER}.tar.xz"
 	PATCHES+=("${SCRIPT_DIR}/esync-unix-mainline.patch"
 		  "${SCRIPT_DIR}/fsync-unix-mainline.patch"
 		  "${SCRIPT_DIR}/fsync_futex_waitv.patch")
@@ -57,38 +57,12 @@ elif [ "${CONFIG}" -eq 3 ]; then
 	BUILD_NSPA=0
 	BUILD_FROM_GIT=0
 	PKG_NAME=wine-stable-cef-fsync
-	PKG_VER=6.0.2
+	PKG_VER=7.0
 	PKG_REL=0
-	WINE_TAR_SOURCE="https://dl.winehq.org/wine/source/6.0/wine-${PKG_VER}.tar.xz"
-	PATCHES+=("${SCRIPT_DIR}/fsync-6.0.patch"
+	WINE_TAR_SOURCE="https://dl.winehq.org/wine/source/7.0/wine-${PKG_VER}.tar.xz"
+	PATCHES+=("${SCRIPT_DIR}/esync-unix-mainline.patch"
+		  "${SCRIPT_DIR}/fsync-unix-mainline.patch"
 		  "${SCRIPT_DIR}/fsync_futex_waitv.patch")
-elif [ "${CONFIG}" -eq 4 ]; then
-	INTERACTIVE=0
-	BUILD_STAGING=0
-	BUILD_NSPA=0
-	BUILD_FROM_GIT=0
-	PKG_NAME=wine-6-stable-cef
-	PKG_VER=6.0.2
-	PKG_REL=0
-	WINE_TAR_SOURCE="https://dl.winehq.org/wine/source/6.0/wine-${PKG_VER}.tar.xz"
-elif [ "${CONFIG}" -eq 5 ]; then
-	INTERACTIVE=0
-	BUILD_STAGING=0
-	BUILD_NSPA=0
-	BUILD_FROM_GIT=0
-	PKG_NAME=wine-7-stable-cef
-	PKG_VER=7.0-rc6
-	PKG_REL=0
-	WINE_TAR_SOURCE="https://dl.winehq.org/wine/source/7.0/wine-${PKG_VER}.tar.xz"
-elif [ "${CONFIG}" -eq 6 ]; then
-	INTERACTIVE=0
-	BUILD_STAGING=1
-	BUILD_NSPA=0
-	BUILD_FROM_GIT=0
-	PKG_NAME=wine-7-staging-cef
-	PKG_VER=7.0-rc6
-	PKG_REL=0
-	WINE_TAR_SOURCE="https://dl.winehq.org/wine/source/7.0/wine-${PKG_VER}.tar.xz"
 else
 	echo "No such configuration. Exiting..."
 	exit -1
