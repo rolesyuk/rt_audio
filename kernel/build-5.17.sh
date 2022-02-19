@@ -1,7 +1,7 @@
 #!/bin/bash
 
-KERNEL_VERSION="5.17-rc3"
-PATCH_VERSION="5.17-rc2-rt4"
+KERNEL_VERSION="5.17-rc4"
+PATCH_VERSION="5.17-rc4-rt7"
 KERNEL_URL="https://git.kernel.org/torvalds/t"
 PATCH_URL="https://cdn.kernel.org/pub/linux/kernel/projects/rt/5.17"
 SCRIPT_DIR="$(dirname `readlink -f $0`)"
