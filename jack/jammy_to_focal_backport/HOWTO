@@ -1,0 +1,25 @@
+Was built using https://help.ubuntu.com/community/PinningHowto [Recommended alternative to pinning]:
+
+	Recommended alternative to pinning
+	
+	In Ubuntu, most times, the libc6 version is updated from version to version - it is not the purpose of this page to describe what libc6 is, but needless to say it breaks the above example.
+	
+	A better method for grabbing things from a development version while not committing your entire machine to that version is as follows:
+	
+	Add the following line to /etc/apt/sources.list
+	
+	deb-src http://archive.ubuntu.com/ubuntu intrepid main restricted universe multiverse
+	
+	Then you'll need to update your repos:
+	
+	sudo apt-get update 
+	
+	Now we need to install some packages so we can build the desired software in intrepid:
+	
+	sudo apt-get build-dep firefox-3.0
+	
+	Now we can do the following to get the package built from intrepid on our hardy machine:
+	
+	sudo apt-get -b source -t intrepid [-a i386] firefox-3.0
+	
+	It will output lots of info on the screen, when it's done (could take a while), you will have rc1 instead of beta5! 
