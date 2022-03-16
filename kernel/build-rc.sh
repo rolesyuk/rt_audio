@@ -8,7 +8,7 @@ function download {
 	wget -c "${PATCH_URL}/patch-${PATCH_VERSION}.patch.xz"
 	wget -c "${PATCH_URL}/patch-${PATCH_VERSION}.patch.sign"
 	
-	gunzip -k "linux-${KERNEL_VERSION}.tar.gz"
+	gunzip -kf "linux-${KERNEL_VERSION}.tar.gz"
 	unxz -k "patch-${PATCH_VERSION}.patch.xz"
 	gpg --verify "patch-${PATCH_VERSION}.patch.sign" "patch-${PATCH_VERSION}.patch" || exit -1
 }
