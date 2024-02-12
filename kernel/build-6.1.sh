@@ -1,7 +1,7 @@
 #!/bin/bash
 
-KERNEL_VERSION="6.1.65"
-PATCH_VERSION="6.1.65-rt18"
+KERNEL_VERSION="6.1.77"
+PATCH_VERSION="6.1.77-rt24"
 KERNEL_URL="https://cdn.kernel.org/pub/linux/kernel/v6.x"
 PATCH_URL="https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.1"
 SCRIPT_DIR="$(dirname `readlink -f $0`)"
