@@ -45,7 +45,7 @@ function build {
 	fi
 
 	yes "" | make oldconfig
-	yes "" | make CC=$CC EXTRAVERSION=$EXTRAVERSION -j$(nproc) deb-pkg || exit -1
+	yes "" | make CC=$CC EXTRAVERSION=$EXTRAVERSION -j$(nproc) bindeb-pkg || exit -1
 
 	cd ..
 	rm -rf "linux-${KERNEL_VERSION}"
