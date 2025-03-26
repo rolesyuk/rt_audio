@@ -1,6 +1,6 @@
 #!/bin/bash
 
-KERNEL_VERSION="6.12.19"
+KERNEL_VERSION="6.12.20"
 PATCH_VERSION="6.12.16-rt9"
 KERNEL_URL="https://cdn.kernel.org/pub/linux/kernel/v6.x"
 PATCH_URL="https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.12"
